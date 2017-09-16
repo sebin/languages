@@ -1,0 +1,22 @@
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2 jumbotron'>
+      <h2>Languages</h2>
+      <br>
+      <%= form_tag '/', method: :get, class: 'row' do %>
+        <div class='col-md-4'>
+          <%= text_field_tag(:q, params[:q], class: 'form-control search-input') %>
+        </div>
+        <div class='col-md-3'>
+          <%= submit_tag("Search", class: 'btn btn-primary') %>
+        </div>
+      <% end %>
+      <div>
+        <h3>Results</h3>
+        <% unless @results.nil? %>
+          <%= @results.join(', ') %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

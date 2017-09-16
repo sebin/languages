@@ -18,10 +18,15 @@ module Concerns
       output_array = []
       languages.each_with_index do |language, index|
         score_hash = { position: index, name: language['Name'], score: 0 }
+        found = true
         ['Name', 'Type', 'Designed by'].each do |key|
+          next unless found
           items_array = split_to_array(language[key])
           score_hash[:score] += (items_array & terms_array).size
-          score_hash[:score] -= 1 if items_array.include?(non_match_term)
+          if items_array.include?(non_match_term)
+            found = false
+            score_hash[:score] -= 1 if items_array.include?(non_match_term)
+          end
         end
         output_array << score_hash
       end
@@ -31,13 +36,14 @@ module Concerns
     # Find languages with high matching scores
     def best_matches(match_scores)
       max = match_scores.map { |s| s[:score] }.max
-      match_scores.select { |s| s[:score] == max }
+      match_scores.select { |s| s[:score] == max && s[:score] > 0 }
     end
 
     # Convert search query to an array, find out the non matching term also
     def split_terms(string)
       terms_array = split_to_array(string)
       non_match_term = string.partition('-').last.downcase.strip
+      terms_array.delete(non_match_term)
       [terms_array, non_match_term]
     end
 
